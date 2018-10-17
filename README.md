@@ -1,0 +1,2 @@
+# trendmodel
+FX trendmodel
