@@ -1,6 +1,6 @@
 # functions to facilitate easy download of FX data from Bloomberg
 
-readbbfix <- function(currencies, startDate, endDate) {
+bbfix2timeSeries <- function(currencies, startDate, endDate) {
   # reads in Bloomberg 30-minutes FX fixing data 
   # and exports them as a timeSeries object.
   # 
@@ -39,11 +39,60 @@ readbbfix <- function(currencies, startDate, endDate) {
   return(rates)
 }
 
-library(Rblpapi)
-library(timeSeries)
-library(purrr)
 
-spot <- readbbfix(c("EURUSD", "USDJPY", "GBPUSD"), as.Date("2018-06-01"), as.Date("2018-06-28"))
-tail(spot, n=48)
-plot(spot)
-
+bdh2xts <- function(series, field="PX_LAST", start.date=as.Date("2000-01-01"), end.date=NULL, 
+                per=NULL, adj="a", days="w", fill="na", con=defaultConnection()){
+  # reads in Bloomberg time series (daily and lower frequency)
+  # and stores them in an xts object
+  # 
+  # args:
+  #   series: vector of Bloomberg tickers to download
+  #   field: the Bloomberg field to download ["PX_LAST"]. There can be only one field per 
+  #          function call.
+  #   start.date, end.date: define range of data to download
+  #   per: periodicity selection. [none] | "d" | "w" | "m" | "q" | "y"
+  #   adj: periodicity adjustment. ["a"] | "c" | "f"
+  #   days: non-trading days fill option. ["w"] | "c" | "a"
+  #   non-trading-day fill metod. ["c"] | "na"
+  #   con: the blpConnect() connection. [defaultConnection()]
+  if(length(field)>1)
+    stop("Only one field is allowed!")
+  # periodicity selection:
+  per.lib <- c("d"="DAILY","w"="WEEKLY","m"="MONTHLY","q"="QUARTERLY","y"="YEARLY")
+  if(is.null(per))
+    options <- NULL
+  else {
+    if(!is.element(per,names(per.lib)))
+      stop("'per' argument must be 'd', 'w', 'm', 'q', 's' or 'y'.")
+    else 
+      options <- c("periodicitySelection"=per.lib[[per]])
+  }
+  # periodicity adjustment:
+  adj.lib <- c("a"="ACTUAL", "c"="CALENDAR", "f"="FISCAL")
+  if(!is.element(adj,names(adj.lib)))
+    stop("'adj' argument must be 'a', 'c' or 'f'")
+  else
+    options <- c(options, "periodicityAdjustment"=adj.lib[[adj]])
+  # non-trading day fill options:
+  days.lib <- c("w"="NON_TRADING_WEEKDAYS", "c"="ALL_CALENDAR_DAYS", "a"="ACTIVE_DAYS_ONLY")
+  if(!is.element(days,names(days.lib)))
+    stop("'days' argument must be 'w', 'c' or 'a'")
+  else
+    options <- c(options, "nonTradingDayFillOption"=days.lib[[days]])
+  # non-trading day fill method:
+  fill.lib <- c("c"="PREVIOUS_VALUE", "na"="NIL_VALUE")
+  if(!is.element(fill,names(fill.lib)))
+    stop("'fill' agrument must be 'c' or 'na'")
+  else
+    options <- c(options, "nonTradingDayFillMethod"=fill.lib[[fill]])
+  thedata <- bdh(series, field, start.date=start.date, end.date=end.date, options=options, con=con)
+  if(length(series)>1){
+    thereturn <- xts(thedata[[1]][[2]], thedata[[1]][["date"]])
+    for(i in series[-1])
+      thereturn <- cbind(thereturn, xts(thedata[[i]][[2]], thedata[[i]][["date"]]))
+  }
+  else
+    thereturn <- xts(thedata[,2], thedata[,"date"])
+  colnames(thereturn) <- gsub("\\s*\\w*$", "", series)
+  return(thereturn)
+}
