@@ -1,6 +1,6 @@
 # functions to facilitate easy download of FX data from Bloomberg
 
-bbfix2timeSeries <- function(currencies, startDate, endDate) {
+bbfix2timeSeries <- function(currencies, startDate, endDate, con=defaultConnection()) {
   # reads in Bloomberg 30-minutes FX fixing data 
   # and exports them as a timeSeries object.
   # 
@@ -9,6 +9,7 @@ bbfix2timeSeries <- function(currencies, startDate, endDate) {
   #   startDate, endDate: Date objects, restrict time window of data to download
   #                       The time series start at midnight NY time on startDate 
   #                       and end at 23:30 NY time on endDate
+  #   con: the blpConnect connecion. [defaultConnection()]
   # 
   # returns: timeSeries object of 30-minutes data of Bloomberg fixing rates.
   #   The function uses Bloomberg's NY fixings.
@@ -17,10 +18,9 @@ bbfix2timeSeries <- function(currencies, startDate, endDate) {
   # 
   # usage:
   #   spot <- readbbfix(c("EURUSD", "USDJPY", "GBPUSD"), as.Date("2018-06-01"), as.Date("2018-06-28"))
-  require(Rblpapi)
-  require(timeSeries)
-  require(purrr)
-  con <- blpConnect()
+  # 
+  # depends: Rblpapi, timeSeries, purrr
+  #
   n <- length(currencies)
   timeTags <- paste0("F",formatC(rep(0:23,rep(2,24)), width=2, format="d", flag="0"),c("0","3"))
   timeStrs <- paste0(substring(timeTags,2,3),":",substring(timeTags,4,4),"0:00")
@@ -55,6 +55,9 @@ bdh2xts <- function(series, field="PX_LAST", start.date=as.Date("2000-01-01"), e
   #   days: non-trading days fill option. ["w"] | "c" | "a"
   #   non-trading-day fill metod. ["c"] | "na"
   #   con: the blpConnect() connection. [defaultConnection()]
+  # 
+  # depends: Rblpapi, xts
+  #
   if(length(field)>1)
     stop("Only one field is allowed!")
   # periodicity selection:
