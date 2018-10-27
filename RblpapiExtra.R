@@ -1,4 +1,22 @@
+# functions to facilitate easy download of FX data from Bloomberg
+
 readbbfix <- function(currencies, startDate, endDate) {
+  # reads in Bloomberg 30-minutes FX fixing data 
+  # and exports them as a timeSeries object.
+  # 
+  # args: 
+  #   currencies: vector of ISO currency code pairs
+  #   startDate, endDate: Date objects, restrict time window of data to download
+  #                       The time series start at midnight NY time on startDate 
+  #                       and end at 23:30 NY time on endDate
+  # 
+  # returns: timeSeries object of 30-minutes data of Bloomberg fixing rates.
+  #   The function uses Bloomberg's NY fixings.
+  #   The (time) zone and FinCenter attributes of the timeSeries are "New_York".
+  #   Missing values on non-trading days (incl. weekends).
+  # 
+  # usage:
+  #   spot <- readbbfix(c("EURUSD", "USDJPY", "GBPUSD"), as.Date("2018-06-01"), as.Date("2018-06-28"))
   require(Rblpapi)
   require(timeSeries)
   require(purrr)
