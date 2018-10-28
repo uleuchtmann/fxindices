@@ -40,7 +40,7 @@ bbfix2timeSeries <- function(currencies, startDate, endDate, con=defaultConnecti
 }
 
 
-bdh2xts <- function(series, field="PX_LAST", start.date=as.Date("2000-01-01"), end.date=NULL, 
+bdh2xts <- function(series, field="PX_LAST", start.date=NULL, end.date=NULL, 
                 per=NULL, adj="a", days="w", fill="na", con=defaultConnection()){
   # reads in Bloomberg time series (daily and lower frequency)
   # and stores them in an xts object
