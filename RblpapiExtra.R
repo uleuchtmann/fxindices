@@ -31,11 +31,8 @@ bbfix2timeSeries <- function(currencies, startDate, endDate, con=defaultConnecti
                                  return(timeSeries(x$PX_LAST, paste(as.character(x$date - 1), y), zone="New_York", FinCenter="New_York")),
                                  return(timeSeries(x$PX_LAST, paste(as.character(x$date),     y), zone="New_York", FinCenter="New_York")))
   tsList <- mapply(makeTS, BBout.s, rep(timeStrs, n), SIMPLIFY=FALSE)
-  TSlist <- list()
-  for(i in 1:n) TSlist[[i]] <- reduce(tsList[names(tsList[(1+48*(i-1L)):(48+48*(i-1L))])], merge)
-  rates <- reduce(TSlist, cbind)
+  rates <- Reduce(cbind, lapply(currencies, function(x) sort(Reduce(rbind, tsList[sub(" .*$", "", names(tsList))==x]))))
   names(rates) <- currencies
-  blpDisconnect(con)
   return(rates)
 }
 
