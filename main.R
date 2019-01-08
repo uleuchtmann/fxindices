@@ -1,16 +1,18 @@
 # main file as working horse for the project: testing, development etc.
 
-# read in EURUSD data
-options(blpAutoConnect=TRUE, blpHost="192.168.2.130", blpPort=18194L)
-library(Rblpapi)
-con <- blpConnect()
 library(timeSeries)
-library(purrr)
-source("RblpapiExtra.R")
-EURUSD <- bbfix2timeSeries("EURUSD", as.Date("2007-02-28"), as.Date("2018-11-05"))
-setFinCenter(EURUSD) <- "GMT"
-plot(EURUSD)
 
+# read in EURUSD data from Bloomberg
+# options(blpAutoConnect=TRUE, blpHost="192.168.2.130", blpPort=18194L)
+# library(Rblpapi)
+# con <- blpConnect()
+# source("RblpapiExtra.R")
+# EURUSD <- bbfix2timeSeries("EURUSD", as.Date("2007-02-28"), as.Date("2018-11-05"))
+
+# read in FX data from FX.Rdata, extract EURUSD
+load("FX.RData")
+EURUSD <- window(FX[, "EURUSD"], "2007-02-28 17:30:00", "2019-01-08 08:30:00")
+rm(FX)
 
 # transformations
 # 30-minutes data
@@ -28,5 +30,6 @@ De60 <- window(100.0 * diff(log(EURUSD[seq(2,length(EURUSD),2), ])),
 Ve60 <- window((100.0*filter(log(EURUSD[seq(2,length(EURUSD),2), ]), 
                              c(1,-2,1), method="convolution", sides=1))^2.0, 
                "2007-03-01 00:00:00", "2018-10-31 23:30:00")
-  
+
+ind = sqrt(2.0 * Ve30 / Ve60)  
   
