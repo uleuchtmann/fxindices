@@ -2,13 +2,13 @@
 
 bbfix2timeSeries <- function(currencies, startDate, endDate, con=defaultConnection()) {
   # reads in Bloomberg 30-minutes FX fixing data 
-  # and exports them as a timeSeries object.
+  # and exports them as a regular timeSeries object.
   # 
   # args: 
-  #   currencies: vector of ISO currency code pairs
+  #   currencies: vector of ISO currency codes or code pairs
   #   startDate, endDate: Date objects, restrict time window of data to download
-  #                       The time series start at midnight NY time on startDate 
-  #                       and end at 23:30 NY time on endDate
+  #                       The time series start at 17:30 NY time on the day before startDate 
+  #                       and ends at 23:30 NY time on endDate. 
   #   con: the blpConnect connecion. [defaultConnection()]
   # 
   # returns: timeSeries object of 30-minutes data of Bloomberg fixing rates.
@@ -19,7 +19,7 @@ bbfix2timeSeries <- function(currencies, startDate, endDate, con=defaultConnecti
   # usage:
   #   spot <- readbbfix(c("EURUSD", "USDJPY", "GBPUSD"), as.Date("2018-06-01"), as.Date("2018-06-28"))
   # 
-  # depends: Rblpapi, timeSeries, purrr
+  # depends: Rblpapi, timeSeries
   #
   n <- length(currencies)
   timeTags <- paste0("F",formatC(rep(0:23,rep(2,24)), width=2, format="d", flag="0"),c("0","3"))
@@ -61,7 +61,7 @@ bdh2xts <- function(series, field = "PX_LAST", start.date = NULL, end.date = NUL
 
   # check for filed argument
   if(length(field)!=1)
-    stop("Only one field is allowed!")
+    stop("Requires one but only one field!")
   
   options <- NULL
   
