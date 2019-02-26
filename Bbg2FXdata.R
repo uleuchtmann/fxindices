@@ -3,7 +3,7 @@
 
 # assumes Bloomberg runs on 192.168.2.124
 # assumes on that machine the following commands have been executed:
-#   start C:\blp\API\bbcomm.exe
+#   start C:\blp\DAPI\bbcomm.exe
 #   socat TCP4-LISTEN:18194,fork TCP4:localhost:8194
 options(blpAutoConnect=TRUE, blpHost="192.168.2.124", blpPort=18194L)
 # if Bloomberg runs on localhost, use instead

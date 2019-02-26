@@ -33,7 +33,11 @@ bbfix2timeSeries <- function(currencies, startDate, endDate, con=defaultConnecti
   tsList <- mapply(makeTS, BBout.s, rep(timeStrs, n), SIMPLIFY=FALSE)
   rates <- Reduce(cbind, lapply(currencies, function(x) sort(Reduce(rbind, tsList[sub(" .*$", "", names(tsList))==x]))))
   names(rates) <- currencies
-  return(rates)
+  # correction of Bbg's DTS bug:
+  timeStamps <- timeSequence(time(rates[1, ]), time(rates[nrow(rates), ]), by="30 mins")
+  ones <- timeSeries(rep(1.0, length(timeStamps)), timeStamps)
+  rates.c <- merge(timeSeries(rep(1.0, length(timeStamps)), timeStamps), rates)[timeStamps, currencies]
+  return(rates.c)
 }
 
 
