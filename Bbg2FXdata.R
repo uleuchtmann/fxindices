@@ -19,9 +19,9 @@ source("RblpapiExtra.R")
 
 currencies <- c("EURUSD", "USDJPY", "GBPUSD", "USDCHF", "USDCAD", "AUDUSD", 
                 "NZDUSD", "USDSEK", "USDNOK", "USDDKK", "USDPLN", "USDCZK", 
-                "USDHUF", "USDRUB", "USDZAR", "USDTRY", "USDILS", "USDCNH", 
-                "USDINR", "USDSGD", "USDTHB", "USDMYR", "USDMXN", "USDBRL", 
-                "USDCLP")
-FX <- bbfix2timeSeries(currencies, as.Date("2007-02-28"), as.Date("2018-02-27"))
+                "USDHUF", "USDRON", "USDRUB", "USDZAR", "USDTRY", "USDILS", 
+                "USDCNH", "USDINR", "USDSGD", "USDTHB", "USDMYR", "USDMXN", 
+                "USDBRL", "USDCLP")
+FX <- bbfix2timeSeries(currencies, as.Date("2007-02-28"), as.Date("2019-02-27"))
 
 save(FX, file="FX.RData")
