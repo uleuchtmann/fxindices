@@ -1,2 +1,4 @@
 # FX Indices
-FX indices
+This project calculates FX indices for the most liquid currencies.
+
+
