@@ -1,2 +1,2 @@
-# trendmodel
-FX trendmodel
+# FX Indices
+FX indices
