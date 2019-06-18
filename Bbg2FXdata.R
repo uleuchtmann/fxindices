@@ -23,7 +23,7 @@ currencies <- c("EURUSD", "USDJPY", "GBPUSD", "USDCHF", "USDCAD", "AUDUSD",
                 "USDCNH", "USDINR", "USDSGD", "USDTHB", "USDMYR", "USDMXN", 
                 "USDBRL", "USDCLP")
 
-# shifted end date to "2019-05-28"
+# shifted end date to Sys.Date()
 FX <- bbfix2timeSeries(currencies, as.Date("2007-02-28"), as.Date(Sys.Date()))
 
 save(FX, file="FX.RData")
