@@ -1,7 +1,7 @@
 # read in Bloomberg FX fixing data and 
 # store as timeSeries object in file FX.RData
 
-# assumes Bloomberg runs on 192.168.2.116
+# assumes Bloomberg runs on 192.168.2.115
 # assumes on that machine the following commands have been executed:
 #   start C:\blp\DAPI\bbcomm.exe
 #   socat TCP4-LISTEN:18194,fork TCP4:localhost:8194
@@ -24,7 +24,14 @@ currencies <- c("AUDUSD", "GBPUSD", "USDCAD", "USDCNH", "USDCZK",
                 "USDPLN", "USDRON", "USDRUB", "USDSGD", "USDZAR", 
                 "USDSEK", "USDCHF", "USDTHB", "USDTRY")
 
-# shifted end date to Sys.Date()
+# download as timeSeries object
+# with the help of the 'bbfix2timeSeries' function
 FX <- bbfix2timeSeries(currencies, as.Date("2007-02-28"), as.Date(Sys.Date()))
 
+# clip off data points in the future
+FX <- FX[as.POSIXct(time(FX)) < Sys.time(), ]
+
+# save to file 'FX.RData'
 save(FX, file="FX.RData")
+
+
